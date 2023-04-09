@@ -3,15 +3,13 @@ const mongoose = require("mongoose");
 const schema = new mongoose.Schema(
   {
     username: "string",
-    userId: "Number",
     name: "string",
     age: "string",
     phone: "string",
     gender: "string",
-    passcode: "string",
-    auth: "string",
-    batch: "string",
-    status: { type: "string", default: "pending" },
+    password: "string",
+    role: { type: "string", default: "user" }, //user and admin
+    image: "string",
   },
   { timestamps: true }
 );
