@@ -23,7 +23,7 @@ function authenticateToken(req, res, next) {
 }
 
 function generateAccessToken(payload) {
-  return jwt.sign(payload, process.env.TOKEN_SECRET, { expiresIn: "45d" });
+  return jwt.sign(payload, process.env.TOKEN_SECRET);
 }
 
 module.exports = {

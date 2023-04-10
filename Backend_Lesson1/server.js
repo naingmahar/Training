@@ -75,7 +75,7 @@ app.post("/s3/upload", (req, res) => {
   });
 });
 
-// app.use(authenticateToken);
+app.use(authenticateToken);
 routes(app);
 
 // const logo = `

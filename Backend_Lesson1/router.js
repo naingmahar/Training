@@ -17,6 +17,8 @@ var { generateAccessToken } = require("./src/middleware/jwt");
 const mongoose = require("mongoose");
 const { encryptText } = require("./src/lib/encrypt");
 const { uploadPublicFile } = require("./src/lib/S3Upload");
+const { addCategory, Category, getCategories, deleteCategoryByID } = require("./src/Category/Categories.service");
+const { addIncome, getIncomes, deleteIncomeByID } = require("./src/Income/Income.service");
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -64,7 +66,7 @@ let routes = (app) => {
         if (!data) return res.status("400").send({error:"Invalid Security Code",message:"Fail"});
         return res.status("200").send({
           status: "Success",
-          token: generateAccessToken({ username: req.body.username }),
+          token: generateAccessToken({ username: req.body.username,_id: data._id }),
         });
       }
     );
@@ -97,6 +99,46 @@ let routes = (app) => {
       });
     });
   });
+
+  app.post("/category",async (req,res)=>{
+    let user = req.user 
+    const servRes = await addCategory({ ...req.body,...{user:user._id} })
+    return ReponseService(res,servRes.data,servRes.error)
+  })
+
+  app.get("/category",async (req,res)=>{
+    console.warn("User",req.user)
+    const servRes = await getCategories()
+    return ReponseService(res,servRes.data,servRes.error)
+  })
+
+  app.delete("/category",async (req,res)=>{
+    const servRes = await deleteCategoryByID(req.body._id)
+    return ReponseService(res,servRes.data,servRes.error)
+  })
+
+  app.post("/income",async (req,res)=>{
+    let user = req.user 
+    const servRes = await addIncome({ ...req.body,...{user:user._id} })
+    return ReponseService(res,servRes.data,servRes.error)
+  })
+
+  app.get("/income",async (req,res)=>{
+    const servRes = await getIncomes()
+    return ReponseService(res,servRes.data,servRes.error)
+  })
+
+  app.delete("/income",async (req,res)=>{
+    const servRes = await deleteIncomeByID(req.body._id)
+    return ReponseService(res,servRes.data,servRes.error)
+  })
+
 };
+
+
+const ReponseService = (res,data,error) =>{
+  if(data) res.status("200").send(data);
+  else res.status("400").send(error)
+}
 
 module.exports = { routes };

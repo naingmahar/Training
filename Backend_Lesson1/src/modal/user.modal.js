@@ -9,6 +9,7 @@ const schema = new mongoose.Schema(
     gender: "string",
     password: "string",
     role: { type: "string", default: "user" }, //user and admin
+    amount: { type: "number", default: 0 },
     image: "string",
   },
   { timestamps: true }
