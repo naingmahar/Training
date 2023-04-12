@@ -1,22 +1,10 @@
 var { storage } = require("./server");
-// const express = require("express");
-// const app = express();
 const fs = require("fs");
 var User = require("./src/modal/user.modal");
-var File = require("./src/modal/file.modal");
-var Record = require("./src/modal/record.model");
-var Schedule = require("./src/modal/schedule.model");
-var TempFile = require("./src/modal/tempFile.model");
-var Security = require("./src/modal/security.model");
 var multer = require("multer");
 const path = require("path");
-var { AuthCode } = require("./src/lib/KeyGenerate");
-var { EncryptFile } = require("./src/lib/FileEncrypt");
-var { fileSplit } = require("./src/lib/FileSplit");
 var { generateAccessToken } = require("./src/middleware/jwt");
 const mongoose = require("mongoose");
-const { encryptText } = require("./src/lib/encrypt");
-const { uploadPublicFile } = require("./src/lib/S3Upload");
 const { addCategory, Category, getCategories, deleteCategoryByID } = require("./src/Category/Categories.service");
 const { addIncome, getIncomes, deleteIncomeByID } = require("./src/Income/Income.service");
 
@@ -45,6 +33,14 @@ let routes = (app) => {
       return res.status("200").send(data);
     });
   });
+
+  app.delete("/users", async (req, res) => {
+    User.deleteOne({_id:req.query.id},function (err, data) {
+      if (err) return res.status("500").send(err.message);
+      return res.status("200").send(data);
+    });
+  });
+
 
 
   app.post("/permission", async (req, res) => {
@@ -107,13 +103,12 @@ let routes = (app) => {
   })
 
   app.get("/category",async (req,res)=>{
-    console.warn("User",req.user)
     const servRes = await getCategories()
     return ReponseService(res,servRes.data,servRes.error)
   })
 
   app.delete("/category",async (req,res)=>{
-    const servRes = await deleteCategoryByID(req.body._id)
+    const servRes = await deleteCategoryByID(req.query.id)
     return ReponseService(res,servRes.data,servRes.error)
   })
 
@@ -129,7 +124,7 @@ let routes = (app) => {
   })
 
   app.delete("/income",async (req,res)=>{
-    const servRes = await deleteIncomeByID(req.body._id)
+    const servRes = await deleteIncomeByID(req.query.id)
     return ReponseService(res,servRes.data,servRes.error)
   })
 
