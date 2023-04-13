@@ -7,6 +7,7 @@ var { generateAccessToken } = require("./src/middleware/jwt");
 const mongoose = require("mongoose");
 const { addCategory, Category, getCategories, deleteCategoryByID } = require("./src/Category/Categories.service");
 const { addIncome, getIncomes, deleteIncomeByID } = require("./src/Income/Income.service");
+const { addExpense, deleteExpenseByID, getExpense } = require("./src/Expense/Expense.service");
 
 var storage = multer.diskStorage({
   destination: function (req, file, cb) {
@@ -127,6 +128,24 @@ let routes = (app) => {
     const servRes = await deleteIncomeByID(req.query.id)
     return ReponseService(res,servRes.data,servRes.error)
   })
+
+
+  app.post("/expense",async (req,res)=>{
+    let user = req.user
+    const servRes = await addExpense({ ...req.body,...{user:user._id} })
+    return ReponseService(res,servRes.data,servRes.error)
+  })
+
+  app.get("/expense",async (req,res)=>{
+    const servRes = await getExpense()
+    return ReponseService(res,servRes.data,servRes.error)
+  })
+
+  app.delete("/expense",async (req,res)=>{
+    const servRes = await deleteExpenseByID(req.query.id)
+    return ReponseService(res,servRes.data,servRes.error)
+  })
+
 
 };
 
